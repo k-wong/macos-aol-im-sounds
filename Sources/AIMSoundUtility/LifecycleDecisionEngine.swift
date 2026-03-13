@@ -36,6 +36,8 @@ final class LifecycleDecisionEngine {
     private var lastWakeAt: Date?
     private var sessionActive = true
     private var pendingWakeOpen = false
+    private var laptopCloseSoundEnabled = true
+    private var laptopOpenSoundEnabled = true
 
     func setEnabled(_ enabled: Bool) {
         self.enabled = enabled
@@ -45,6 +47,16 @@ final class LifecycleDecisionEngine {
     func setSessionActive(_ sessionActive: Bool) {
         self.sessionActive = sessionActive
         log("Session active set to \(sessionActive)")
+    }
+
+    func setLaptopCloseSoundEnabled(_ enabled: Bool) {
+        laptopCloseSoundEnabled = enabled
+        log("Laptop close playback enabled set to \(enabled)")
+    }
+
+    func setLaptopOpenSoundEnabled(_ enabled: Bool) {
+        laptopOpenSoundEnabled = enabled
+        log("Laptop open playback enabled set to \(enabled)")
     }
 
     func handle(_ signal: LifecycleSignal, now: Date) -> SoundEvent? {
@@ -74,9 +86,18 @@ final class LifecycleDecisionEngine {
 
             return emit(.open, now: now)
         case .lidAngleReachedCloseThreshold:
+            guard laptopCloseSoundEnabled else {
+                log("Ignoring lid close because laptop close playback is disabled")
+                pendingWakeOpen = false
+                return nil
+            }
             pendingWakeOpen = false
             return emit(.exit, now: now)
         case .clamshellOpened:
+            guard laptopOpenSoundEnabled else {
+                log("Ignoring clamshell open because laptop open playback is disabled")
+                return nil
+            }
             if let lastWakeAt, now.timeIntervalSince(lastWakeAt) < Constants.wakeFollowupWindow {
                 log("Ignoring clamshellOpened because a wake was observed recently")
                 return nil
@@ -86,6 +107,11 @@ final class LifecycleDecisionEngine {
             lastWakeAt = now
             return emit(.open, now: now)
         case .clamshellClosed:
+            guard laptopCloseSoundEnabled else {
+                log("Ignoring clamshell close because laptop close playback is disabled")
+                pendingWakeOpen = false
+                return nil
+            }
             pendingWakeOpen = false
             return emit(.exit, now: now)
         case .sessionDidBecomeActive:

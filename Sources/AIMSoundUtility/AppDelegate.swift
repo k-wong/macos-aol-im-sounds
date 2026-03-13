@@ -21,6 +21,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         decisionEngine.setEnabled(appState.enabled)
         notificationDecisionEngine.setEnabled(appState.enabled)
+        decisionEngine.setLaptopCloseSoundEnabled(appState.laptopCloseSoundEnabled)
+        decisionEngine.setLaptopOpenSoundEnabled(appState.laptopOpenSoundEnabled)
 
         lifecycleMonitor = LifecycleMonitor { [weak self] signal in
             self?.handle(signal)
@@ -40,6 +42,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onToggle: { [weak self] in self?.toggleEnabled() },
             onOpenAccessibilitySettings: { [weak self] in
                 self?.openAccessibilitySettings()
+            },
+            onToggleLaptopCloseSound: { [weak self] in
+                self?.toggleLaptopCloseSound()
+            },
+            onToggleLaptopOpenSound: { [weak self] in
+                self?.toggleLaptopOpenSound()
             },
             onMenuWillOpen: { [weak self] in
                 self?.syncAccessibilityState(requestPromptIfNeeded: false)
@@ -61,6 +69,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         appState.enabled.toggle()
         decisionEngine.setEnabled(appState.enabled)
         notificationDecisionEngine.setEnabled(appState.enabled)
+    }
+
+    private func toggleLaptopCloseSound() {
+        appState.laptopCloseSoundEnabled.toggle()
+        decisionEngine.setLaptopCloseSoundEnabled(appState.laptopCloseSoundEnabled)
+    }
+
+    private func toggleLaptopOpenSound() {
+        appState.laptopOpenSoundEnabled.toggle()
+        decisionEngine.setLaptopOpenSoundEnabled(appState.laptopOpenSoundEnabled)
     }
 
     private func handle(_ signal: LifecycleSignal) {
