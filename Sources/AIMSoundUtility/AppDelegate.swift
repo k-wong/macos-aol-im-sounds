@@ -6,9 +6,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let appState = AppState()
     private let soundPlayer = SoundPlayer()
     private let decisionEngine = LifecycleDecisionEngine()
+    private let notificationDecisionEngine = NotificationDecisionEngine()
+    private let notificationRuleEngine = NotificationRuleEngine()
     private let logger = Logger(subsystem: "com.kev.mac-aim", category: "app")
 
     private var lifecycleMonitor: LifecycleMonitor?
+    private var notificationMonitor: NotificationMonitor?
     private var statusItemController: StatusItemController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -16,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         log("Application finished launching")
 
         decisionEngine.setEnabled(appState.enabled)
+        notificationDecisionEngine.setEnabled(appState.enabled)
 
         lifecycleMonitor = LifecycleMonitor { [weak self] signal in
             self?.handle(signal)
@@ -26,19 +30,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         lifecycleMonitor?.start()
 
+        notificationMonitor = NotificationMonitor(ruleEngine: notificationRuleEngine) { [weak self] event in
+            self?.handleNotification(event)
+        }
+        notificationMonitor?.start()
+
         statusItemController = StatusItemController(
             appState: appState,
             onToggle: { [weak self] in self?.toggleEnabled() }
         )
+        statusItemController?.setAccessibilityTrusted(notificationMonitor?.isAccessibilityTrusted ?? false)
     }
 
     func applicationWillTerminate(_ notification: Notification) {
         lifecycleMonitor?.stop()
+        notificationMonitor?.stop()
     }
 
     private func toggleEnabled() {
         appState.enabled.toggle()
         decisionEngine.setEnabled(appState.enabled)
+        notificationDecisionEngine.setEnabled(appState.enabled)
     }
 
     private func handle(_ signal: LifecycleSignal) {
@@ -50,6 +62,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         log("Playing sound event \(event.rawValue)")
         soundPlayer.play(event)
+    }
+
+    private func handleNotification(_ event: NotificationEvent) {
+        log("App delegate received notification event \(event.dedupeKey)")
+        guard let soundEvent = notificationDecisionEngine.handle(event, now: Date()) else {
+            log("Notification event \(event.dedupeKey) produced no sound event")
+            return
+        }
+
+        log("Playing sound event \(soundEvent.rawValue)")
+        soundPlayer.play(soundEvent)
     }
 
     private func log(_ message: String) {

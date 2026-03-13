@@ -9,8 +9,14 @@ final class StatusItemController: NSObject {
     private let bundle: Bundle
     private let menu = NSMenu()
     private var stateCancellable: AnyCancellable?
+    private var accessibilityTrusted = false
 
     private lazy var statusLabelItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+    private lazy var supportItem = makeInfoItem()
+    private lazy var guidanceHeaderItem = makeInfoItem()
+    private lazy var guidancePathItem = makeInfoItem()
+    private lazy var guidanceToggleItem = makeInfoItem()
+    private lazy var accessibilityItem = makeInfoItem()
     private lazy var quitItem = NSMenuItem(
         title: "Quit",
         action: #selector(quitSelected),
@@ -47,6 +53,12 @@ final class StatusItemController: NSObject {
 
         menu.addItem(statusLabelItem)
         menu.addItem(.separator())
+        menu.addItem(supportItem)
+        menu.addItem(guidanceHeaderItem)
+        menu.addItem(guidancePathItem)
+        menu.addItem(guidanceToggleItem)
+        menu.addItem(accessibilityItem)
+        menu.addItem(.separator())
         menu.addItem(quitItem)
     }
 
@@ -60,6 +72,11 @@ final class StatusItemController: NSObject {
 
     private func refreshUI(enabled: Bool) {
         statusLabelItem.title = enabled ? "AIM sounds are On" : "AIM sounds are Off"
+        supportItem.title = "Notification banners: Slack + macOS apps"
+        guidanceHeaderItem.title = "For AIM-only alerts:"
+        guidancePathItem.title = "System Settings > Notifications"
+        guidanceToggleItem.title = "Turn off \"Play sound for notification\""
+        accessibilityItem.title = accessibilityTrusted ? "Accessibility access: Allowed" : "Accessibility access: Needed"
 
         guard let button = statusItem.button else {
             return
@@ -70,6 +87,15 @@ final class StatusItemController: NSObject {
         image?.isTemplate = true
         button.image = image
         button.imageScaling = .scaleProportionallyDown
+        button.toolTip = """
+        Toggle AIM sounds
+        For AIM-only alerts, turn off "Play sound for notification" in System Settings > Notifications.
+        """
+    }
+
+    func setAccessibilityTrusted(_ trusted: Bool) {
+        accessibilityTrusted = trusted
+        refreshUI(enabled: appState.enabled)
     }
 
     private func loadMenuBarImage(named name: String) -> NSImage? {
@@ -88,6 +114,12 @@ final class StatusItemController: NSObject {
             systemSymbolName: symbolName,
             accessibilityDescription: statusLabelItem.title
         )
+    }
+
+    private func makeInfoItem() -> NSMenuItem {
+        let item = NSMenuItem(title: "", action: nil, keyEquivalent: "")
+        item.isEnabled = false
+        return item
     }
 
     @objc private func handleClick(_ sender: AnyObject?) {
