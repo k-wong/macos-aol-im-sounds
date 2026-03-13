@@ -2,45 +2,53 @@ import Foundation
 import IOKit
 import IOKit.pwr_mgt
 
-@MainActor
 final class ClamshellMonitor: NSObject {
-    var onChange: ((Bool) -> Void)?
+    var onChange: (@MainActor @Sendable (Bool) -> Void)?
 
     private let pollInterval: TimeInterval
     private let stateProvider: () -> Bool?
-    private var timer: Timer?
+    private let queue: DispatchQueue
+    private var timer: DispatchSourceTimer?
     private var lastKnownState: Bool?
 
     init(
-        pollInterval: TimeInterval = 1.0,
+        pollInterval: TimeInterval = 0.05,
+        queue: DispatchQueue = DispatchQueue(label: "aim.clamshell.monitor", qos: .userInteractive),
         stateProvider: @escaping () -> Bool? = ClamshellMonitor.readCurrentState
     ) {
         self.pollInterval = pollInterval
+        self.queue = queue
         self.stateProvider = stateProvider
         super.init()
     }
 
     func start() {
-        let initialState = stateProvider()
-        lastKnownState = initialState
+        stop()
+        lastKnownState = stateProvider()
 
-        let timer = Timer.scheduledTimer(
-            timeInterval: pollInterval,
-            target: self,
-            selector: #selector(timerFired(_:)),
-            userInfo: nil,
-            repeats: true
+        let timer = DispatchSource.makeTimerSource(queue: queue)
+        timer.schedule(
+            deadline: .now() + pollInterval,
+            repeating: pollInterval,
+            leeway: .milliseconds(20)
         )
+        timer.setEventHandler { [weak self] in
+            self?.poll()
+        }
+        timer.resume()
         self.timer = timer
-        RunLoop.main.add(timer, forMode: .common)
     }
 
     func stop() {
-        timer?.invalidate()
+        timer?.cancel()
         timer = nil
     }
 
-    private func poll() {
+    func currentState() -> Bool? {
+        stateProvider()
+    }
+
+    nonisolated private func poll() {
         guard let currentState = stateProvider() else {
             return
         }
@@ -50,11 +58,10 @@ final class ClamshellMonitor: NSObject {
         }
 
         lastKnownState = currentState
-        onChange?(currentState)
-    }
-
-    @objc private func timerFired(_ timer: Timer) {
-        poll()
+        let onChange = self.onChange
+        DispatchQueue.main.async {
+            onChange?(currentState)
+        }
     }
 
     nonisolated static func readCurrentState() -> Bool? {
