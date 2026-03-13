@@ -2,32 +2,70 @@ import AppKit
 import Combine
 
 @MainActor
-final class StatusItemController: NSObject {
+final class StatusItemController: NSObject, NSMenuDelegate {
+    enum AccessibilityMenuState: Equatable {
+        case allowed
+        case needsAccess
+
+        var title: String {
+            switch self {
+            case .allowed:
+                return "Accessibility access: Allowed"
+            case .needsAccess:
+                return "Grant Accessibility Access..."
+            }
+        }
+
+        var isActionable: Bool {
+            switch self {
+            case .allowed:
+                return false
+            case .needsAccess:
+                return true
+            }
+        }
+    }
+
     private let statusItem: NSStatusItem
     private let appState: AppState
     private let onToggle: () -> Void
+    private let onOpenAccessibilitySettings: () -> Void
+    private let onMenuWillOpen: () -> Void
     private let bundle: Bundle
     private let menu = NSMenu()
     private var stateCancellable: AnyCancellable?
-    private var accessibilityTrusted = false
+    private var accessibilityMenuState: AccessibilityMenuState = .needsAccess
 
     private lazy var statusLabelItem = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     private lazy var supportItem = makeInfoItem()
     private lazy var guidanceHeaderItem = makeInfoItem()
     private lazy var guidancePathItem = makeInfoItem()
     private lazy var guidanceToggleItem = makeInfoItem()
-    private lazy var accessibilityItem = makeInfoItem()
+    private lazy var accessibilityHelpItem = makeInfoItem()
+    private lazy var accessibilityItem = NSMenuItem(
+        title: "",
+        action: #selector(openAccessibilitySettings),
+        keyEquivalent: ""
+    )
     private lazy var quitItem = NSMenuItem(
         title: "Quit",
         action: #selector(quitSelected),
         keyEquivalent: "q"
     )
 
-    init(appState: AppState, bundle: Bundle = .module, onToggle: @escaping () -> Void) {
+    init(
+        appState: AppState,
+        bundle: Bundle = .module,
+        onToggle: @escaping () -> Void,
+        onOpenAccessibilitySettings: @escaping () -> Void,
+        onMenuWillOpen: @escaping () -> Void = {}
+    ) {
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         self.appState = appState
         self.bundle = bundle
         self.onToggle = onToggle
+        self.onOpenAccessibilitySettings = onOpenAccessibilitySettings
+        self.onMenuWillOpen = onMenuWillOpen
         super.init()
 
         configureButton()
@@ -48,8 +86,10 @@ final class StatusItemController: NSObject {
     }
 
     private func configureMenu() {
+        menu.delegate = self
         quitItem.target = self
         statusLabelItem.isEnabled = false
+        accessibilityItem.target = self
 
         menu.addItem(statusLabelItem)
         menu.addItem(.separator())
@@ -57,6 +97,7 @@ final class StatusItemController: NSObject {
         menu.addItem(guidanceHeaderItem)
         menu.addItem(guidancePathItem)
         menu.addItem(guidanceToggleItem)
+        menu.addItem(accessibilityHelpItem)
         menu.addItem(accessibilityItem)
         menu.addItem(.separator())
         menu.addItem(quitItem)
@@ -76,7 +117,9 @@ final class StatusItemController: NSObject {
         guidanceHeaderItem.title = "For AIM-only alerts:"
         guidancePathItem.title = "System Settings > Notifications"
         guidanceToggleItem.title = "Turn off \"Play sound for notification\""
-        accessibilityItem.title = accessibilityTrusted ? "Accessibility access: Allowed" : "Accessibility access: Needed"
+        accessibilityHelpItem.title = "Notification banner detection needs Accessibility access"
+        accessibilityItem.title = accessibilityMenuState.title
+        accessibilityItem.isEnabled = accessibilityMenuState.isActionable
 
         guard let button = statusItem.button else {
             return
@@ -94,8 +137,12 @@ final class StatusItemController: NSObject {
     }
 
     func setAccessibilityTrusted(_ trusted: Bool) {
-        accessibilityTrusted = trusted
+        accessibilityMenuState = trusted ? .allowed : .needsAccess
         refreshUI(enabled: appState.enabled)
+    }
+
+    func menuWillOpen(_ menu: NSMenu) {
+        onMenuWillOpen()
     }
 
     private func loadMenuBarImage(named name: String) -> NSImage? {
@@ -140,5 +187,9 @@ final class StatusItemController: NSObject {
 
     @objc private func quitSelected() {
         NSApp.terminate(nil)
+    }
+
+    @objc private func openAccessibilitySettings() {
+        onOpenAccessibilitySettings()
     }
 }

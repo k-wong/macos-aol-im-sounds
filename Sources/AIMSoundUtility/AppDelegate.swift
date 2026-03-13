@@ -8,6 +8,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let decisionEngine = LifecycleDecisionEngine()
     private let notificationDecisionEngine = NotificationDecisionEngine()
     private let notificationRuleEngine = NotificationRuleEngine()
+    private let accessibilityPermissionCoordinator = AccessibilityPermissionCoordinator()
     private let logger = Logger(subsystem: "com.kev.mac-aim", category: "app")
 
     private var lifecycleMonitor: LifecycleMonitor?
@@ -33,18 +34,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         notificationMonitor = NotificationMonitor(ruleEngine: notificationRuleEngine) { [weak self] event in
             self?.handleNotification(event)
         }
-        notificationMonitor?.start()
 
         statusItemController = StatusItemController(
             appState: appState,
-            onToggle: { [weak self] in self?.toggleEnabled() }
+            onToggle: { [weak self] in self?.toggleEnabled() },
+            onOpenAccessibilitySettings: { [weak self] in
+                self?.openAccessibilitySettings()
+            },
+            onMenuWillOpen: { [weak self] in
+                self?.syncAccessibilityState(requestPromptIfNeeded: false)
+            }
         )
-        statusItemController?.setAccessibilityTrusted(notificationMonitor?.isAccessibilityTrusted ?? false)
+        syncAccessibilityState(requestPromptIfNeeded: true)
     }
 
     func applicationWillTerminate(_ notification: Notification) {
         lifecycleMonitor?.stop()
         notificationMonitor?.stop()
+    }
+
+    func applicationDidBecomeActive(_ notification: Notification) {
+        syncAccessibilityState(requestPromptIfNeeded: false)
     }
 
     private func toggleEnabled() {
@@ -73,6 +83,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         log("Playing sound event \(soundEvent.rawValue)")
         soundPlayer.play(soundEvent)
+    }
+
+    private func syncAccessibilityState(requestPromptIfNeeded: Bool) {
+        if requestPromptIfNeeded {
+            accessibilityPermissionCoordinator.requestAccessIfNeeded()
+        }
+
+        let isTrusted = accessibilityPermissionCoordinator.isTrusted
+        statusItemController?.setAccessibilityTrusted(isTrusted)
+
+        if isTrusted {
+            notificationMonitor?.start()
+        } else {
+            notificationMonitor?.stop()
+            log("Accessibility permission is not granted; notification monitor will remain idle")
+        }
+    }
+
+    private func openAccessibilitySettings() {
+        accessibilityPermissionCoordinator.promptAndOpenSettings()
+        syncAccessibilityState(requestPromptIfNeeded: false)
     }
 
     private func log(_ message: String) {
