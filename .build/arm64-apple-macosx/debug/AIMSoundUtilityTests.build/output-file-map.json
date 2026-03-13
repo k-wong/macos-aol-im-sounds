@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/master.swiftdeps"
+  },
+  "/Users/kev/Documents/mac-aim/Tests/AIMSoundUtilityTests/LifecycleDecisionEngineTests.swift": {
+    "dependencies": "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/LifecycleDecisionEngineTests.d",
+    "object": "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/LifecycleDecisionEngineTests.swift.o",
+    "swiftmodule": "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/LifecycleDecisionEngineTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/LifecycleDecisionEngineTests.swiftdeps",
+    "diagnostics": "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/LifecycleDecisionEngineTests.dia"
+  }
+}

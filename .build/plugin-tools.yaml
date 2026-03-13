@@ -1,0 +1,181 @@
+client:
+  name: basic
+  file-system: device-agnostic
+tools: {}
+targets:
+  "AIMSoundUtility-arm64-apple-macosx26.0-debug.exe": ["<AIMSoundUtility-arm64-apple-macosx26.0-debug.exe>"]
+  "AIMSoundUtility-arm64-apple-macosx26.0-debug.module": ["<AIMSoundUtility-arm64-apple-macosx26.0-debug.module>"]
+  "AIMSoundUtilityPackageTests-arm64-apple-macosx26.0-debug.module": ["<AIMSoundUtilityPackageTests-arm64-apple-macosx26.0-debug.module>"]
+  "AIMSoundUtilityPackageTests-arm64-apple-macosx26.0-debug.test": ["<AIMSoundUtilityPackageTests-arm64-apple-macosx26.0-debug.test>"]
+  "AIMSoundUtilityTests-arm64-apple-macosx26.0-debug.module": ["<AIMSoundUtilityTests-arm64-apple-macosx26.0-debug.module>"]
+  "PackageStructure": ["<PackageStructure>"]
+  "main": ["<AIMSoundUtility-arm64-apple-macosx26.0-debug.exe>","<AIMSoundUtility-arm64-apple-macosx26.0-debug.module>"]
+  "test": ["<AIMSoundUtility-arm64-apple-macosx26.0-debug.exe>","<AIMSoundUtility-arm64-apple-macosx26.0-debug.module>","<AIMSoundUtilityPackageTests-arm64-apple-macosx26.0-debug.test>","<AIMSoundUtilityTests-arm64-apple-macosx26.0-debug.module>"]
+default: "main"
+nodes:
+  "/Users/kev/Documents/mac-aim/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/kev/Documents/mac-aim/Tests/AIMSoundUtilityTests/":
+    is-directory-structure: true
+    content-exclusion-patterns: [".git",".build"]
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility":
+    is-mutated: true
+commands:
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility-entitlement.plist":
+    tool: write-auxiliary-file
+    inputs: ["<entitlement-plist>","<com.apple.security.get-task-allow>"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility-entitlement.plist"]
+    description: "Write auxiliary file /Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility-entitlement.plist"
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/AIMSoundUtilityApp.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/AppDelegate.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/AppState.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/ClamshellMonitor.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/LifecycleDecisionEngine.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/LifecycleMonitor.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/SoundPlayer.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/StatusItemController.swift","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/DerivedSources/resource_bundle_accessor.swift"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/sources"]
+    description: "Write auxiliary file /Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/sources"
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.product/Objects.LinkFileList":
+    tool: write-auxiliary-file
+    inputs: ["<link-file-list>","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AIMSoundUtilityApp.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppDelegate.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppState.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/ClamshellMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleDecisionEngine.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/SoundPlayer.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/StatusItemController.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/resource_bundle_accessor.swift.o"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.product/Objects.LinkFileList"]
+    description: "Write auxiliary file /Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.product/Objects.LinkFileList"
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.derived/runner.swift"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.build/sources"]
+    description: "Write auxiliary file /Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.build/sources"
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.derived/runner.swift":
+    tool: test-entry-point-tool
+    inputs: []
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.derived/runner.swift"]
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.product/Objects.LinkFileList":
+    tool: write-auxiliary-file
+    inputs: ["<link-file-list>","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AIMSoundUtilityApp.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppDelegate.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppState.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/ClamshellMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleDecisionEngine.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/SoundPlayer.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/StatusItemController.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/resource_bundle_accessor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.build/runner.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/LifecycleDecisionEngineTests.swift.o"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.product/Objects.LinkFileList"]
+    description: "Write auxiliary file /Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.product/Objects.LinkFileList"
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/sources":
+    tool: write-auxiliary-file
+    inputs: ["<sources-file-list>","/Users/kev/Documents/mac-aim/Tests/AIMSoundUtilityTests/LifecycleDecisionEngineTests.swift"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/sources"]
+    description: "Write auxiliary file /Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/sources"
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-app-icon-off.svg":
+    tool: copy-tool
+    inputs: ["/Users/kev/Documents/mac-aim/aim-app-icon-off.svg"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-app-icon-off.svg"]
+    description: "Copying /Users/kev/Documents/mac-aim/aim-app-icon-off.svg"
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-app-icon-on.svg":
+    tool: copy-tool
+    inputs: ["/Users/kev/Documents/mac-aim/aim-app-icon-on.svg"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-app-icon-on.svg"]
+    description: "Copying /Users/kev/Documents/mac-aim/aim-app-icon-on.svg"
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-exit.mp3":
+    tool: copy-tool
+    inputs: ["/Users/kev/Documents/mac-aim/aim-exit.mp3"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-exit.mp3"]
+    description: "Copying /Users/kev/Documents/mac-aim/aim-exit.mp3"
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-message.mp3":
+    tool: copy-tool
+    inputs: ["/Users/kev/Documents/mac-aim/aim-message.mp3"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-message.mp3"]
+    description: "Copying /Users/kev/Documents/mac-aim/aim-message.mp3"
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-open.mp3":
+    tool: copy-tool
+    inputs: ["/Users/kev/Documents/mac-aim/aim-open.mp3"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-open.mp3"]
+    description: "Copying /Users/kev/Documents/mac-aim/aim-open.mp3"
+
+  "/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt":
+    tool: write-auxiliary-file
+    inputs: ["<swift-get-version>","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"]
+    always-out-of-date: "true"
+    description: "Write auxiliary file /Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+
+  "<AIMSoundUtility-arm64-apple-macosx26.0-debug.exe>":
+    tool: phony
+    inputs: ["<AIMSoundUtility-arm64-apple-macosx26.0-debug.exe-CodeSigning>"]
+    outputs: ["<AIMSoundUtility-arm64-apple-macosx26.0-debug.exe>"]
+
+  "<AIMSoundUtility-arm64-apple-macosx26.0-debug.module>":
+    tool: phony
+    inputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AIMSoundUtilityApp.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppDelegate.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppState.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/ClamshellMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleDecisionEngine.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/SoundPlayer.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/StatusItemController.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/resource_bundle_accessor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtility.swiftmodule"]
+    outputs: ["<AIMSoundUtility-arm64-apple-macosx26.0-debug.module>"]
+
+  "<AIMSoundUtilityPackageTests-arm64-apple-macosx26.0-debug.module>":
+    tool: phony
+    inputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.build/runner.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtilityPackageTests.swiftmodule"]
+    outputs: ["<AIMSoundUtilityPackageTests-arm64-apple-macosx26.0-debug.module>"]
+
+  "<AIMSoundUtilityPackageTests-arm64-apple-macosx26.0-debug.test>":
+    tool: phony
+    inputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.xctest/Contents/MacOS/AIMSoundUtilityPackageTests"]
+    outputs: ["<AIMSoundUtilityPackageTests-arm64-apple-macosx26.0-debug.test>"]
+
+  "<AIMSoundUtilityTests-arm64-apple-macosx26.0-debug.module>":
+    tool: phony
+    inputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/LifecycleDecisionEngineTests.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtilityTests.swiftmodule"]
+    outputs: ["<AIMSoundUtilityTests-arm64-apple-macosx26.0-debug.module>"]
+
+  "AIMSoundUtility-arm64-apple-macosx26.0-debug.module-resources":
+    tool: phony
+    inputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-app-icon-off.svg","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-app-icon-on.svg","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-exit.mp3","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-message.mp3","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility_AIMSoundUtility.bundle/aim-open.mp3"]
+    outputs: ["<AIMSoundUtility-arm64-apple-macosx26.0-debug.module-resources>"]
+
+  "C.AIMSoundUtility-arm64-apple-macosx26.0-debug.exe":
+    tool: shell
+    inputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AIMSoundUtilityApp.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppDelegate.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppState.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/ClamshellMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleDecisionEngine.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/SoundPlayer.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/StatusItemController.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/resource_bundle_accessor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.product/Objects.LinkFileList"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility"]
+    description: "Linking ./.build/arm64-apple-macosx/debug/AIMSoundUtility"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-L","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug","-o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility","-module-name","AIMSoundUtility","-Xlinker","-no_warn_duplicate_libraries","-emit-executable","-Xlinker","-alias","-Xlinker","_AIMSoundUtility_main","-Xlinker","_main","-Xlinker","-rpath","-Xlinker","@loader_path","@/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.product/Objects.LinkFileList","-Xlinker","-rpath","-Xlinker","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-6.2/macosx","-target","arm64-apple-macosx13.0","-framework","AppKit","-framework","AVFoundation","-framework","IOKit","-framework","SwiftUI","-Xlinker","-add_ast_path","-Xlinker","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtility.swiftmodule","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g"]
+
+  "C.AIMSoundUtility-arm64-apple-macosx26.0-debug.exe-entitlements":
+    tool: shell
+    inputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility-entitlement.plist"]
+    outputs: ["<AIMSoundUtility-arm64-apple-macosx26.0-debug.exe-CodeSigning>"]
+    description: "Applying debug entitlements to ./.build/arm64-apple-macosx/debug/AIMSoundUtility"
+    args: ["codesign","--force","--sign","-","--entitlements","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility-entitlement.plist","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility"]
+
+  "C.AIMSoundUtility-arm64-apple-macosx26.0-debug.module":
+    tool: shell
+    inputs: ["/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/AIMSoundUtilityApp.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/AppDelegate.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/AppState.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/ClamshellMonitor.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/LifecycleDecisionEngine.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/LifecycleMonitor.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/SoundPlayer.swift","/Users/kev/Documents/mac-aim/Sources/AIMSoundUtility/StatusItemController.swift","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/DerivedSources/resource_bundle_accessor.swift","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","<AIMSoundUtility-arm64-apple-macosx26.0-debug.module-resources>","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/sources"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AIMSoundUtilityApp.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppDelegate.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppState.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/ClamshellMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleDecisionEngine.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/SoundPlayer.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/StatusItemController.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/resource_bundle_accessor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtility.swiftmodule"]
+    description: "Compiling Swift Module 'AIMSoundUtility' (9 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","AIMSoundUtility","-emit-dependencies","-emit-module","-emit-module-path","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtility.swiftmodule","-output-file-map","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/output-file-map.json","-incremental","-c","@/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/sources","-I","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx13.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-j8","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_AVAILABLE","-module-cache-path","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-Xfrontend","-entry-point-function-name","-Xfrontend","AIMSoundUtility_main","-swift-version","6","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","mac_aim"]
+
+  "C.AIMSoundUtilityPackageTests-arm64-apple-macosx26.0-debug.module":
+    tool: shell
+    inputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.derived/runner.swift","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtilityTests.swiftmodule","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.build/sources"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.build/runner.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtilityPackageTests.swiftmodule"]
+    description: "Compiling Swift Module 'AIMSoundUtilityPackageTests' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","AIMSoundUtilityPackageTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtilityPackageTests.swiftmodule","-output-file-map","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.build/output-file-map.json","-parse-as-library","-incremental","-c","@/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.build/sources","-I","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx13.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j8","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-emit-objc-header","-emit-objc-header-path","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.build/include/AIMSoundUtilityPackageTests-Swift.h","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","mac_aim"]
+
+  "C.AIMSoundUtilityPackageTests-arm64-apple-macosx26.0-debug.test":
+    tool: shell
+    inputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AIMSoundUtilityApp.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppDelegate.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/AppState.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/ClamshellMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleDecisionEngine.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/LifecycleMonitor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/SoundPlayer.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/StatusItemController.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility.build/resource_bundle_accessor.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.build/runner.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/LifecycleDecisionEngineTests.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.product/Objects.LinkFileList"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.xctest/Contents/MacOS/AIMSoundUtilityPackageTests"]
+    description: "Linking ./.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.xctest/Contents/MacOS/AIMSoundUtilityPackageTests"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-L","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug","-o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.xctest/Contents/MacOS/AIMSoundUtilityPackageTests","-module-name","AIMSoundUtilityPackageTests","-Xlinker","-no_warn_duplicate_libraries","-Xlinker","-bundle","-Xlinker","-rpath","-Xlinker","@loader_path/../../../","@/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityPackageTests.product/Objects.LinkFileList","-Xlinker","-rpath","-Xlinker","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-6.2/macosx","-target","arm64-apple-macosx14.0","-framework","AppKit","-framework","AVFoundation","-framework","IOKit","-framework","SwiftUI","-Xlinker","-add_ast_path","-Xlinker","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtility.swiftmodule","-Xlinker","-add_ast_path","-Xlinker","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtilityPackageTests.swiftmodule","-Xlinker","-add_ast_path","-Xlinker","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtilityTests.swiftmodule","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g"]
+
+  "C.AIMSoundUtilityTests-arm64-apple-macosx26.0-debug.module":
+    tool: shell
+    inputs: ["/Users/kev/Documents/mac-aim/Tests/AIMSoundUtilityTests/LifecycleDecisionEngineTests.swift","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtility","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/sources"]
+    outputs: ["/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/LifecycleDecisionEngineTests.swift.o","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtilityTests.swiftmodule"]
+    description: "Compiling Swift Module 'AIMSoundUtilityTests' (1 sources)"
+    args: ["/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc","-module-name","AIMSoundUtilityTests","-emit-dependencies","-emit-module","-emit-module-path","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules/AIMSoundUtilityTests.swiftmodule","-output-file-map","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/output-file-map.json","-parse-as-library","-incremental","-c","@/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/AIMSoundUtilityTests.build/sources","-I","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/Modules","-target","arm64-apple-macosx14.0","-incremental","-enable-batch-mode","-serialize-diagnostics","-index-store-path","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/index/store","-Onone","-enable-testing","-Xfrontend","-enable-cross-import-overlays","-j8","-DSWIFT_PACKAGE","-DDEBUG","-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE","-module-cache-path","/Users/kev/Documents/mac-aim/.build/arm64-apple-macosx/debug/ModuleCache","-parseable-output","-parse-as-library","-swift-version","6","-plugin-path","/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing","-sdk","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-F","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-I","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-L","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib","-g","-Xcc","-isysroot","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.2.sdk","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks","-Xcc","-F","-Xcc","/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks","-Xcc","-fPIC","-Xcc","-g","-package-name","mac_aim"]
+
+  "PackageStructure":
+    tool: package-structure-tool
+    inputs: ["/Users/kev/Documents/mac-aim/","/Users/kev/Documents/mac-aim/Tests/AIMSoundUtilityTests/","/Users/kev/Documents/mac-aim/Package.swift","/Users/kev/Documents/mac-aim/Package.resolved"]
+    outputs: ["<PackageStructure>"]
+    description: "Planning build"
+    allow-missing-inputs: true
+
