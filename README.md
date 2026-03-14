@@ -18,7 +18,7 @@ Tiny macOS menu bar app that lets you play custom sounds when your Macbook sleep
 1. Download this repo into a local folder
 2. Bring in your own mp3 files (`exit.mp3`, `open.mp3`, `message.mp3`) into the project folder
 3. Double click [build-local-dmg.command](/Users/kev/Documents/mac-aim/build-local-dmg.command) to build a local installer DMG
-4. Install the DMG as you would any other app: double-click it and drag `macOS Soundboard.app` to Applications
+4. Open `dist/macos-soundboard-unsigned.dmg`, then drag `macOS Soundboard.app` to Applications
 
 ### Option 2: Terminal
 

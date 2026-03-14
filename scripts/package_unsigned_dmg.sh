@@ -8,14 +8,15 @@ PRODUCT_NAME="AIMSoundUtility"
 BUILD_DIR="$ROOT_DIR/.build/arm64-apple-macosx/release"
 DIST_DIR="$ROOT_DIR/dist"
 CACHE_DIR="$ROOT_DIR/.cache"
-APP_DIR="$DIST_DIR/$APP_NAME.app"
+WORK_DIR="$DIST_DIR/.package-work"
+APP_DIR="$WORK_DIR/$APP_NAME.app"
 CONTENTS_DIR="$APP_DIR/Contents"
 MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
-ICONSET_DIR="$DIST_DIR/AppIcon.iconset"
+ICONSET_DIR="$WORK_DIR/AppIcon.iconset"
 ICON_FILE="$RESOURCES_DIR/AppIcon.icns"
-STAGING_DIR="$DIST_DIR/dmg-root"
-DMG_PATH="$DIST_DIR/.macos-soundboard-unsigned.dmg"
+STAGING_DIR="$WORK_DIR/dmg-root"
+DMG_PATH="$DIST_DIR/macos-soundboard-unsigned.dmg"
 VOLUME_NAME="$APP_NAME"
 SVG_ICON="$ROOT_DIR/app-icon-on.svg"
 RESOURCE_BUNDLE="$BUILD_DIR/${PRODUCT_NAME}_${PRODUCT_NAME}.bundle"
@@ -42,7 +43,7 @@ if (( ${#missing_files[@]} > 0 )); then
     exit 1
 fi
 
-rm -rf "$APP_DIR" "$ICONSET_DIR" "$STAGING_DIR" "$DMG_PATH"
+rm -rf "$WORK_DIR" "$DMG_PATH"
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR" "$STAGING_DIR"
 
 swift build -c release --package-path "$ROOT_DIR"
@@ -111,5 +112,7 @@ hdiutil create \
     -ov \
     -format UDZO \
     "$DMG_PATH"
+
+rm -rf "$WORK_DIR"
 
 echo "Created unsigned DMG at $DMG_PATH"

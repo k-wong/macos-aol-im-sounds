@@ -4,11 +4,32 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REQUIRED_MP3S=("exit.mp3" "open.mp3" "message.mp3")
+DMG_PATH="$ROOT_DIR/dist/macos-soundboard-unsigned.dmg"
+SUCCEEDED=0
 
 pause() {
     printf '\nPress Return to close...'
     read -r
 }
+
+finish() {
+    local exit_code=$?
+
+    if (( exit_code == 0 )) && (( SUCCEEDED == 1 )); then
+        if [[ -f "$DMG_PATH" ]]; then
+            printf '\nFinished. Your unsigned DMG is at:\n%s\n' "$DMG_PATH"
+            open -R "$DMG_PATH"
+        fi
+    else
+        printf '\nBuild failed before the DMG was created.\n'
+        printf 'If a Terminal window is open above this message, the error details are there.\n'
+    fi
+
+    pause
+    exit "$exit_code"
+}
+
+trap finish EXIT
 
 cd "$ROOT_DIR"
 
@@ -32,6 +53,4 @@ fi
 
 printf '\nBuilding unsigned DMG...\n\n'
 "$ROOT_DIR/scripts/package_unsigned_dmg.sh"
-
-printf '\nFinished. Your unsigned DMG is at:\n%s\n' "$ROOT_DIR/dist/.macos-soundboard-unsigned.dmg"
-pause
+SUCCEEDED=1
