@@ -14,7 +14,7 @@ final class NotificationMonitor {
     private let workspace: NSWorkspace
     private let ruleEngine: NotificationRuleEngine
     private let onEvent: (NotificationEvent) -> Void
-    private let logger = Logger(subsystem: "com.kev.mac-aim", category: "notification.monitor")
+    private let logger = AppLog.logger("notification.monitor")
 
     private var timer: Timer?
     private var visibleBannerKeys: Set<String> = []
@@ -174,9 +174,10 @@ final class NotificationMonitor {
 
         return elements
     }
+}
 
-    private func log(_ message: String) {
+private extension NotificationMonitor {
+    func log(_ message: String) {
         logger.notice("\(message, privacy: .public)")
-        NSLog("%@", message)
     }
 }

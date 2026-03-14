@@ -65,7 +65,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     init(
         appState: AppState,
-        bundle: Bundle = .module,
+        bundle: Bundle = AppResources.bundle(),
         onToggle: @escaping () -> Void,
         onToggleNotificationSounds: @escaping () -> Void,
         onToggleScreenLockSounds: @escaping () -> Void,
@@ -222,7 +222,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private func enabledAccessibilityDescription() -> String {
-        appState.enabled ? "AIM sounds are On" : "AIM sounds are Off"
+        appState.enabled ? "AOL Sounds are On" : "AOL Sounds are Off"
     }
 
     private func notificationSoundsStatus(

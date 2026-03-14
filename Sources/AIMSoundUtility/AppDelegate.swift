@@ -9,7 +9,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let notificationDecisionEngine = NotificationDecisionEngine()
     private let notificationRuleEngine = NotificationRuleEngine()
     private let accessibilityPermissionCoordinator = AccessibilityPermissionCoordinator()
-    private let logger = Logger(subsystem: "com.kev.mac-aim", category: "app")
+    private let logger = AppLog.logger("app")
 
     private var lifecycleMonitor: LifecycleMonitor?
     private var notificationMonitor: NotificationMonitor?
@@ -148,9 +148,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             && accessibilityPermissionCoordinator.isTrusted
         notificationDecisionEngine.setEnabled(enabled)
     }
+}
 
-    private func log(_ message: String) {
+private extension AppDelegate {
+    func log(_ message: String) {
         logger.notice("\(message, privacy: .public)")
-        NSLog("%@", message)
     }
 }

@@ -29,7 +29,7 @@ final class LifecycleDecisionEngine {
         static let wakeFollowupWindow: TimeInterval = 15
     }
 
-    private let logger = Logger(subsystem: "com.kev.mac-aim", category: "lifecycle.decision")
+    private let logger = AppLog.logger("lifecycle.decision")
 
     private var enabled = true
     private var lastPlayedAt: [SoundEvent: Date] = [:]
@@ -150,9 +150,10 @@ final class LifecycleDecisionEngine {
         log("Emitting \(event.rawValue) playback")
         return event
     }
+}
 
-    private func log(_ message: String) {
+private extension LifecycleDecisionEngine {
+    func log(_ message: String) {
         logger.notice("\(message, privacy: .public)")
-        NSLog("%@", message)
     }
 }

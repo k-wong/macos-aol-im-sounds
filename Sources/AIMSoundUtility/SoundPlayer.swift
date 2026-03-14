@@ -1,12 +1,14 @@
 import AVFoundation
 import Foundation
+import OSLog
 
 final class SoundPlayer: @unchecked Sendable {
     private let bundle: Bundle
+    private let logger = AppLog.logger("sound.player")
     private let queue = DispatchQueue(label: "aim.sound.player", qos: .userInitiated)
     private var players: [SoundEvent: AVAudioPlayer] = [:]
 
-    init(bundle: Bundle = .module) {
+    init(bundle: Bundle = AppResources.bundle()) {
         self.bundle = bundle
     }
 
@@ -26,7 +28,7 @@ final class SoundPlayer: @unchecked Sendable {
             player.prepareToPlay()
             player.play()
         } catch {
-            NSLog("Failed to play %@: %@", event.rawValue, String(describing: error))
+            logger.error("Failed to play \(event.rawValue, privacy: .public): \(String(describing: error), privacy: .public)")
         }
     }
 

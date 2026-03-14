@@ -57,7 +57,7 @@ final class LifecycleMonitor {
     private let clamshellMonitor: ClamshellMonitor
     private let workspace: NSWorkspace
     private let suppressCloseSoundsOnLaptopClose: Bool
-    private let logger = Logger(subsystem: "com.kev.mac-aim", category: "lifecycle.monitor")
+    private let logger = AppLog.logger("lifecycle.monitor")
 
     private var observers: [NSObjectProtocol] = []
     private var screenLockObservers: [NSObjectProtocol] = []
@@ -215,12 +215,6 @@ final class LifecycleMonitor {
 
         return true
     }
-
-    private func log(_ message: String) {
-        logger.notice("\(message, privacy: .public)")
-        NSLog("%@", message)
-    }
-
     private func shouldSuppressCloseSignals() -> Bool {
         suppressCloseSoundsOnLaptopClose
     }
@@ -231,5 +225,11 @@ final class LifecycleMonitor {
         }
 
         return lidAngleMonitor.isCurrentlyNearClosed() || clamshellMonitor.currentState() == true
+    }
+}
+
+private extension LifecycleMonitor {
+    func log(_ message: String) {
+        logger.notice("\(message, privacy: .public)")
     }
 }

@@ -17,7 +17,10 @@ let package = Package(
             name: "AIMSoundUtility",
             path: ".",
             exclude: [
+                "dist",
+                "LICENSE",
                 "README.md",
+                "scripts",
                 "Tests"
             ],
             sources: ["Sources/AIMSoundUtility"],

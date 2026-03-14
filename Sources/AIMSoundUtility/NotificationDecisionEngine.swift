@@ -6,7 +6,7 @@ final class NotificationDecisionEngine {
         static let dedupeWindow: TimeInterval = 4
     }
 
-    private let logger = Logger(subsystem: "com.kev.mac-aim", category: "notification.decision")
+    private let logger = AppLog.logger("notification.decision")
     private var enabled = true
     private var lastPlayedAtByDedupeKey: [String: Date] = [:]
 
@@ -37,9 +37,10 @@ final class NotificationDecisionEngine {
     private func evictStaleKeys(now: Date) {
         lastPlayedAtByDedupeKey = lastPlayedAtByDedupeKey.filter { now.timeIntervalSince($0.value) < Constants.dedupeWindow }
     }
+}
 
-    private func log(_ message: String) {
+private extension NotificationDecisionEngine {
+    func log(_ message: String) {
         logger.notice("\(message, privacy: .public)")
-        NSLog("%@", message)
     }
 }
