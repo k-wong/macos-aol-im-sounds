@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-APP_NAME="AOL Sounds"
+APP_NAME="macOS Soundboard"
 PRODUCT_NAME="AIMSoundUtility"
 BUILD_DIR="$ROOT_DIR/.build/arm64-apple-macosx/release"
 DIST_DIR="$ROOT_DIR/dist"
@@ -15,15 +15,32 @@ RESOURCES_DIR="$CONTENTS_DIR/Resources"
 ICONSET_DIR="$DIST_DIR/AppIcon.iconset"
 ICON_FILE="$RESOURCES_DIR/AppIcon.icns"
 STAGING_DIR="$DIST_DIR/dmg-root"
-DMG_PATH="$DIST_DIR/AOL-Sounds-unsigned.dmg"
+DMG_PATH="$DIST_DIR/.macos-soundboard-unsigned.dmg"
 VOLUME_NAME="$APP_NAME"
-SVG_ICON="$ROOT_DIR/aim-app-icon-on.svg"
+SVG_ICON="$ROOT_DIR/app-icon-on.svg"
 RESOURCE_BUNDLE="$BUILD_DIR/${PRODUCT_NAME}_${PRODUCT_NAME}.bundle"
 EXECUTABLE_SOURCE="$BUILD_DIR/$PRODUCT_NAME"
+REQUIRED_MP3S=("exit.mp3" "open.mp3" "message.mp3")
 
 mkdir -p "$CACHE_DIR/clang/ModuleCache" "$CACHE_DIR/swiftpm"
 export CLANG_MODULE_CACHE_PATH="$CACHE_DIR/clang/ModuleCache"
 export SWIFTPM_MODULECACHE_OVERRIDE="$CACHE_DIR/swiftpm"
+
+missing_files=()
+for filename in "${REQUIRED_MP3S[@]}"; do
+    if [[ ! -s "$ROOT_DIR/$filename" ]]; then
+        missing_files+=("$filename")
+    fi
+done
+
+if (( ${#missing_files[@]} > 0 )); then
+    printf 'Missing required audio files:\n' >&2
+    for filename in "${missing_files[@]}"; do
+        printf '  - %s\n' "$filename" >&2
+    done
+    printf '\nAdd your own MP3 files at the project root using those exact names, then try again.\n' >&2
+    exit 1
+fi
 
 rm -rf "$APP_DIR" "$ICONSET_DIR" "$STAGING_DIR" "$DMG_PATH"
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR" "$STAGING_DIR"
@@ -55,17 +72,17 @@ cat > "$CONTENTS_DIR/Info.plist" <<'PLIST'
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleDisplayName</key>
-    <string>AOL Sounds</string>
+    <string>macOS Soundboard</string>
     <key>CFBundleExecutable</key>
-    <string>AOL Sounds</string>
+    <string>macOS Soundboard</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
-    <string>com.aolsounds.app</string>
+    <string>com.macossoundboard.app</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>AOL Sounds</string>
+    <string>macOS Soundboard</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

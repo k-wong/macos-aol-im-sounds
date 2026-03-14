@@ -178,11 +178,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             return
         }
 
-        let imageName = enabled ? "aim-app-icon-on" : "aim-app-icon-off"
+        let imageName = enabled ? "app-icon-on" : "app-icon-off"
         let image = loadMenuBarImage(named: imageName) ?? fallbackImage(enabled: enabled)
-        // These SVGs intentionally differ by their own fills, so keep AppKit
-        // from flattening them into the same monochrome template image.
-        image?.isTemplate = false
         button.image = image
         button.imageScaling = .scaleProportionallyDown
         button.toolTip = enabled ? "Running" : "Off"
@@ -209,6 +206,12 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         }
 
         let image = NSImage(contentsOf: url)
+        if let image {
+            let targetHeight = max(NSStatusBar.system.thickness - 4, 16)
+            let aspectRatio = max(image.size.width / max(image.size.height, 1), 1)
+            image.size = NSSize(width: targetHeight * aspectRatio, height: targetHeight)
+            image.isTemplate = true
+        }
         image?.accessibilityDescription = enabledAccessibilityDescription()
         return image
     }
@@ -222,7 +225,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private func enabledAccessibilityDescription() -> String {
-        appState.enabled ? "AOL Sounds are On" : "AOL Sounds are Off"
+        appState.enabled ? "macOS Soundboard is On" : "macOS Soundboard is Off"
     }
 
     private func notificationSoundsStatus(

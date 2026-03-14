@@ -1,8 +1,6 @@
 .DS_Store
 .build/
 .cache/
+*.mp3
 Tests/
-dist/*
-!dist/AOL Sounds.app/
-!dist/AOL Sounds.app/**
-!dist/AOL-Sounds-unsigned.dmg
+dist/

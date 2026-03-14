@@ -17,19 +17,20 @@ let package = Package(
             name: "AIMSoundUtility",
             path: ".",
             exclude: [
+                "build-local-dmg.command",
                 "dist",
                 "LICENSE",
                 "README.md",
                 "scripts",
                 "Tests"
             ],
-            sources: ["Sources/AIMSoundUtility"],
+            sources: ["Sources/SoundUtility"],
             resources: [
-                .copy("aim-exit.mp3"),
-                .copy("aim-open.mp3"),
-                .copy("aim-message.mp3"),
-                .copy("aim-app-icon-on.svg"),
-                .copy("aim-app-icon-off.svg")
+                .copy("exit.mp3"),
+                .copy("open.mp3"),
+                .copy("message.mp3"),
+                .copy("app-icon-on.svg"),
+                .copy("app-icon-off.svg")
             ],
             linkerSettings: [
                 .linkedFramework("AppKit"),
@@ -42,7 +43,7 @@ let package = Package(
         .testTarget(
             name: "AIMSoundUtilityTests",
             dependencies: ["AIMSoundUtility"],
-            path: "Tests/AIMSoundUtilityTests"
+            path: "Tests/SoundUtilityTests"
         )
     ]
 )

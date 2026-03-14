@@ -50,11 +50,11 @@ final class SoundPlayer: @unchecked Sendable {
     private func resourceName(for event: SoundEvent) -> String {
         switch event {
         case .exit:
-            return "aim-exit"
+            return "exit"
         case .open:
-            return "aim-open"
+            return "open"
         case .message:
-            return "aim-message"
+            return "message"
         }
     }
 }
