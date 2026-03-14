@@ -3,7 +3,7 @@ import Combine
 
 @MainActor
 final class StatusItemController: NSObject, NSMenuDelegate {
-    enum NotificationSoundsMenuState: Equatable {
+    enum NotificationSoundsStatus: Equatable {
         case enabled
         case clickToEnable
 
@@ -16,19 +16,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             }
         }
 
-        var isActionable: Bool {
-            switch self {
-            case .enabled:
-                return false
-            case .clickToEnable:
-                return true
-            }
-        }
     }
 
     private let statusItem: NSStatusItem
     private let appState: AppState
     private let onToggle: () -> Void
+    private let onToggleNotificationSounds: () -> Void
+    private let onToggleScreenLockSounds: () -> Void
     private let onOpenAccessibilitySettings: () -> Void
     private let onToggleLaptopCloseSound: () -> Void
     private let onToggleLaptopOpenSound: () -> Void
@@ -36,12 +30,21 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private let bundle: Bundle
     private let menu = NSMenu()
     private var stateCancellable: AnyCancellable?
-    private var notificationSoundsMenuState: NotificationSoundsMenuState = .clickToEnable
+    private var accessibilityTrusted = false
 
-    private lazy var accessibilityHelpItem = makeInfoItem()
     private lazy var notificationSoundsItem = NSMenuItem(
         title: "",
+        action: #selector(toggleNotificationSounds),
+        keyEquivalent: ""
+    )
+    private lazy var accessibilityPermissionsItem = NSMenuItem(
+        title: "Grant accessibility permissions",
         action: #selector(openAccessibilitySettings),
+        keyEquivalent: ""
+    )
+    private lazy var screenLockSoundsItem = NSMenuItem(
+        title: "",
+        action: #selector(toggleScreenLockSounds),
         keyEquivalent: ""
     )
     private lazy var laptopCloseSoundItem = NSMenuItem(
@@ -64,6 +67,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         appState: AppState,
         bundle: Bundle = .module,
         onToggle: @escaping () -> Void,
+        onToggleNotificationSounds: @escaping () -> Void,
+        onToggleScreenLockSounds: @escaping () -> Void,
         onOpenAccessibilitySettings: @escaping () -> Void,
         onToggleLaptopCloseSound: @escaping () -> Void,
         onToggleLaptopOpenSound: @escaping () -> Void,
@@ -73,6 +78,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         self.appState = appState
         self.bundle = bundle
         self.onToggle = onToggle
+        self.onToggleNotificationSounds = onToggleNotificationSounds
+        self.onToggleScreenLockSounds = onToggleScreenLockSounds
         self.onOpenAccessibilitySettings = onOpenAccessibilitySettings
         self.onToggleLaptopCloseSound = onToggleLaptopCloseSound
         self.onToggleLaptopOpenSound = onToggleLaptopOpenSound
@@ -84,6 +91,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         bindState()
         refreshUI(
             enabled: appState.enabled,
+            notificationSoundsEnabled: appState.notificationSoundsEnabled,
+            screenLockSoundsEnabled: appState.screenLockSoundsEnabled,
             laptopCloseSoundEnabled: appState.laptopCloseSoundEnabled,
             laptopOpenSoundEnabled: appState.laptopOpenSoundEnabled
         )
@@ -104,11 +113,14 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.delegate = self
         quitItem.target = self
         notificationSoundsItem.target = self
+        accessibilityPermissionsItem.target = self
+        screenLockSoundsItem.target = self
         laptopCloseSoundItem.target = self
         laptopOpenSoundItem.target = self
 
-        menu.addItem(accessibilityHelpItem)
         menu.addItem(notificationSoundsItem)
+        menu.addItem(accessibilityPermissionsItem)
+        menu.addItem(screenLockSoundsItem)
         menu.addItem(laptopCloseSoundItem)
         menu.addItem(laptopOpenSoundItem)
         menu.addItem(.separator())
@@ -116,15 +128,22 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private func bindState() {
-        stateCancellable = Publishers.CombineLatest3(
-            appState.$enabled,
-            appState.$laptopCloseSoundEnabled,
+        stateCancellable = Publishers.CombineLatest(
+            Publishers.CombineLatest4(
+                appState.$enabled,
+                appState.$notificationSoundsEnabled,
+                appState.$screenLockSoundsEnabled,
+                appState.$laptopCloseSoundEnabled
+            ),
             appState.$laptopOpenSoundEnabled
         )
             .receive(on: RunLoop.main)
-            .sink { [weak self] enabled, laptopCloseSoundEnabled, laptopOpenSoundEnabled in
+            .sink { [weak self] state, laptopOpenSoundEnabled in
+                let (enabled, notificationSoundsEnabled, screenLockSoundsEnabled, laptopCloseSoundEnabled) = state
                 self?.refreshUI(
                     enabled: enabled,
+                    notificationSoundsEnabled: notificationSoundsEnabled,
+                    screenLockSoundsEnabled: screenLockSoundsEnabled,
                     laptopCloseSoundEnabled: laptopCloseSoundEnabled,
                     laptopOpenSoundEnabled: laptopOpenSoundEnabled
                 )
@@ -133,13 +152,21 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     private func refreshUI(
         enabled: Bool,
+        notificationSoundsEnabled: Bool,
+        screenLockSoundsEnabled: Bool,
         laptopCloseSoundEnabled: Bool,
         laptopOpenSoundEnabled: Bool
     ) {
-        accessibilityHelpItem.title = "Notification banner detection needs Accessibility access"
-        accessibilityHelpItem.isHidden = notificationSoundsMenuState == .enabled
-        notificationSoundsItem.title = notificationSoundsMenuState.title
-        notificationSoundsItem.isEnabled = notificationSoundsMenuState.isActionable
+        let notificationSoundsStatus = notificationSoundsStatus(
+            appEnabled: enabled,
+            notificationSoundsEnabled: notificationSoundsEnabled,
+            accessibilityTrusted: accessibilityTrusted
+        )
+        notificationSoundsItem.title = notificationSoundsStatus.title
+        accessibilityPermissionsItem.isHidden = accessibilityTrusted
+        screenLockSoundsItem.title = screenLockSoundsEnabled
+            ? "Lock/unlock sound: Enabled"
+            : "Lock/unlock sound: Click to enable"
         laptopCloseSoundItem.title = laptopCloseSoundEnabled
             ? "Laptop close sound: Enabled"
             : "Laptop close sound: Click to enable"
@@ -153,16 +180,20 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
         let imageName = enabled ? "aim-app-icon-on" : "aim-app-icon-off"
         let image = loadMenuBarImage(named: imageName) ?? fallbackImage(enabled: enabled)
-        image?.isTemplate = true
+        // These SVGs intentionally differ by their own fills, so keep AppKit
+        // from flattening them into the same monochrome template image.
+        image?.isTemplate = false
         button.image = image
         button.imageScaling = .scaleProportionallyDown
         button.toolTip = enabled ? "Running" : "Off"
     }
 
     func setAccessibilityTrusted(_ trusted: Bool) {
-        notificationSoundsMenuState = trusted ? .enabled : .clickToEnable
+        accessibilityTrusted = trusted
         refreshUI(
             enabled: appState.enabled,
+            notificationSoundsEnabled: appState.notificationSoundsEnabled,
+            screenLockSoundsEnabled: appState.screenLockSoundsEnabled,
             laptopCloseSoundEnabled: appState.laptopCloseSoundEnabled,
             laptopOpenSoundEnabled: appState.laptopOpenSoundEnabled
         )
@@ -194,10 +225,16 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         appState.enabled ? "AIM sounds are On" : "AIM sounds are Off"
     }
 
-    private func makeInfoItem() -> NSMenuItem {
-        let item = NSMenuItem(title: "", action: nil, keyEquivalent: "")
-        item.isEnabled = false
-        return item
+    private func notificationSoundsStatus(
+        appEnabled: Bool,
+        notificationSoundsEnabled: Bool,
+        accessibilityTrusted: Bool
+    ) -> NotificationSoundsStatus {
+        if appEnabled && notificationSoundsEnabled && accessibilityTrusted {
+            return .enabled
+        }
+
+        return .clickToEnable
     }
 
     @objc private func handleClick(_ sender: AnyObject?) {
@@ -222,6 +259,14 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     @objc private func openAccessibilitySettings() {
         onOpenAccessibilitySettings()
+    }
+
+    @objc private func toggleNotificationSounds() {
+        onToggleNotificationSounds()
+    }
+
+    @objc private func toggleScreenLockSounds() {
+        onToggleScreenLockSounds()
     }
 
     @objc private func toggleLaptopCloseSound() {

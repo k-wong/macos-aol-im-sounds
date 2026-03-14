@@ -20,7 +20,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         log("Application finished launching")
 
         decisionEngine.setEnabled(appState.enabled)
-        notificationDecisionEngine.setEnabled(appState.enabled)
+        syncNotificationSoundsEnabled()
+        decisionEngine.setScreenLockSoundsEnabled(appState.screenLockSoundsEnabled)
         decisionEngine.setLaptopCloseSoundEnabled(appState.laptopCloseSoundEnabled)
         decisionEngine.setLaptopOpenSoundEnabled(appState.laptopOpenSoundEnabled)
 
@@ -40,6 +41,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItemController = StatusItemController(
             appState: appState,
             onToggle: { [weak self] in self?.toggleEnabled() },
+            onToggleNotificationSounds: { [weak self] in
+                self?.toggleNotificationSounds()
+            },
+            onToggleScreenLockSounds: { [weak self] in
+                self?.toggleScreenLockSounds()
+            },
             onOpenAccessibilitySettings: { [weak self] in
                 self?.openAccessibilitySettings()
             },
@@ -68,7 +75,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func toggleEnabled() {
         appState.enabled.toggle()
         decisionEngine.setEnabled(appState.enabled)
-        notificationDecisionEngine.setEnabled(appState.enabled)
+        syncNotificationSoundsEnabled()
+    }
+
+    private func toggleNotificationSounds() {
+        appState.notificationSoundsEnabled.toggle()
+        syncNotificationSoundsEnabled()
+    }
+
+    private func toggleScreenLockSounds() {
+        appState.screenLockSoundsEnabled.toggle()
+        decisionEngine.setScreenLockSoundsEnabled(appState.screenLockSoundsEnabled)
     }
 
     private func toggleLaptopCloseSound() {
@@ -110,6 +127,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let isTrusted = accessibilityPermissionCoordinator.isTrusted
         statusItemController?.setAccessibilityTrusted(isTrusted)
+        syncNotificationSoundsEnabled()
 
         if isTrusted {
             notificationMonitor?.start()
@@ -122,6 +140,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func openAccessibilitySettings() {
         accessibilityPermissionCoordinator.promptAndOpenSettings()
         syncAccessibilityState(requestPromptIfNeeded: false)
+    }
+
+    private func syncNotificationSoundsEnabled() {
+        let enabled = appState.enabled
+            && appState.notificationSoundsEnabled
+            && accessibilityPermissionCoordinator.isTrusted
+        notificationDecisionEngine.setEnabled(enabled)
     }
 
     private func log(_ message: String) {

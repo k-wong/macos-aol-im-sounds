@@ -4,16 +4,12 @@ Tiny macOS menu bar app that plays custom AIM-style sounds when your Mac sleeps,
 
 ## Features
 
-- `aim-exit.mp3` when the Mac goes to sleep, locks, or the lid closes
-- `aim-open.mp3` when the Mac wakes, unlocks, or the lid opens
-- `aim-message.mp3` when supported notification banners appear, including Slack
-- lid-close detection combines `AppleClamshellState` polling with HID lid-angle monitoring for faster close events
-- duplicate open and close sounds are debounced to avoid double playback around wake and unlock transitions
-- duplicate notification banner events are deduplicated so one banner only plays one AIM sound
-- lid-close sounds are suppressed on `MacBookAir10,1` (`M1 MacBook Air`) to avoid false positives on that hardware
-- left-click menu bar icon toggles the app on or off
-- menu bar icon switches between the on/off AIM icons and shows `Running` or `Off` on hover
-- right-click menu bar icon exposes notification sound setup, laptop open/close sound toggles, and `Quit`
+- Plays `aim-exit.mp3` when your Mac sleeps, locks, or the lid closes
+- Plays `aim-open.mp3` when your Mac wakes, unlocks, or the lid opens
+- Plays `aim-message.mp3` for supported notification banners, including Slack
+- Lets you turn the app on or off from the menu bar
+- Shows different menu bar icons for the On and Off states
+- Gives you quick access to notification setup, laptop open/close sound toggles, and Quit
 
 ## Install
 

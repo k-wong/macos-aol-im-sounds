@@ -3,6 +3,47 @@ import CoreGraphics
 import Foundation
 import OSLog
 
+protocol ScreenLockNotificationObserving: AnyObject {
+    func addLockObserver(using block: @escaping @Sendable (Notification) -> Void) -> NSObjectProtocol
+    func addUnlockObserver(using block: @escaping @Sendable (Notification) -> Void) -> NSObjectProtocol
+    func removeObserver(_ observer: NSObjectProtocol)
+}
+
+final class DistributedScreenLockNotificationCenter: ScreenLockNotificationObserving {
+    private enum Constants {
+        static let screenLockedNotification = Notification.Name("com.apple.screenIsLocked")
+        static let screenUnlockedNotification = Notification.Name("com.apple.screenIsUnlocked")
+    }
+
+    private let center: DistributedNotificationCenter
+
+    init(center: DistributedNotificationCenter = .default()) {
+        self.center = center
+    }
+
+    func addLockObserver(using block: @escaping @Sendable (Notification) -> Void) -> NSObjectProtocol {
+        center.addObserver(
+            forName: Constants.screenLockedNotification,
+            object: nil,
+            queue: .main,
+            using: block
+        )
+    }
+
+    func addUnlockObserver(using block: @escaping @Sendable (Notification) -> Void) -> NSObjectProtocol {
+        center.addObserver(
+            forName: Constants.screenUnlockedNotification,
+            object: nil,
+            queue: .main,
+            using: block
+        )
+    }
+
+    func removeObserver(_ observer: NSObjectProtocol) {
+        center.removeObserver(observer)
+    }
+}
+
 @MainActor
 final class LifecycleMonitor {
     private enum Constants {
@@ -11,6 +52,7 @@ final class LifecycleMonitor {
 
     private let onSignal: (LifecycleSignal) -> Void
     private let notificationCenter: NotificationCenter
+    private let screenLockNotificationCenter: ScreenLockNotificationObserving
     private let lidAngleMonitor: LidAngleMonitor
     private let clamshellMonitor: ClamshellMonitor
     private let workspace: NSWorkspace
@@ -18,10 +60,12 @@ final class LifecycleMonitor {
     private let logger = Logger(subsystem: "com.kev.mac-aim", category: "lifecycle.monitor")
 
     private var observers: [NSObjectProtocol] = []
+    private var screenLockObservers: [NSObjectProtocol] = []
 
     init(
         workspace: NSWorkspace = .shared,
         notificationCenter: NotificationCenter = NSWorkspace.shared.notificationCenter,
+        screenLockNotificationCenter: ScreenLockNotificationObserving = DistributedScreenLockNotificationCenter(),
         lidAngleMonitor: LidAngleMonitor = LidAngleMonitor(),
         clamshellMonitor: ClamshellMonitor = ClamshellMonitor(),
         suppressCloseSoundsOnLaptopClose: Bool = HardwareProfile.current.isM1MacBookAir,
@@ -29,6 +73,7 @@ final class LifecycleMonitor {
     ) {
         self.workspace = workspace
         self.notificationCenter = notificationCenter
+        self.screenLockNotificationCenter = screenLockNotificationCenter
         self.lidAngleMonitor = lidAngleMonitor
         self.clamshellMonitor = clamshellMonitor
         self.suppressCloseSoundsOnLaptopClose = suppressCloseSoundsOnLaptopClose
@@ -100,6 +145,24 @@ final class LifecycleMonitor {
             }
         )
 
+        screenLockObservers.append(
+            screenLockNotificationCenter.addLockObserver { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    self?.log("Received screen lock notification")
+                    self?.onSignal(.sessionDidResignActive)
+                }
+            }
+        )
+
+        screenLockObservers.append(
+            screenLockNotificationCenter.addUnlockObserver { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    self?.log("Received screen unlock notification")
+                    self?.onSignal(.sessionDidBecomeActive)
+                }
+            }
+        )
+
         lidAngleMonitor.onCloseThresholdReached = { [weak self] in
             guard let self else {
                 return
@@ -131,6 +194,8 @@ final class LifecycleMonitor {
         log("Stopping lifecycle monitor")
         observers.forEach(notificationCenter.removeObserver(_:))
         observers.removeAll()
+        screenLockObservers.forEach(screenLockNotificationCenter.removeObserver(_:))
+        screenLockObservers.removeAll()
         lidAngleMonitor.stop()
         clamshellMonitor.stop()
     }

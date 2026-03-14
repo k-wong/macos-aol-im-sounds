@@ -36,6 +36,7 @@ final class LifecycleDecisionEngine {
     private var lastWakeAt: Date?
     private var sessionActive = true
     private var pendingWakeOpen = false
+    private var screenLockSoundsEnabled = true
     private var laptopCloseSoundEnabled = true
     private var laptopOpenSoundEnabled = true
 
@@ -47,6 +48,11 @@ final class LifecycleDecisionEngine {
     func setSessionActive(_ sessionActive: Bool) {
         self.sessionActive = sessionActive
         log("Session active set to \(sessionActive)")
+    }
+
+    func setScreenLockSoundsEnabled(_ enabled: Bool) {
+        screenLockSoundsEnabled = enabled
+        log("Screen lock playback enabled set to \(enabled)")
     }
 
     func setLaptopCloseSoundEnabled(_ enabled: Bool) {
@@ -117,10 +123,18 @@ final class LifecycleDecisionEngine {
         case .sessionDidBecomeActive:
             sessionActive = true
             pendingWakeOpen = false
+            guard screenLockSoundsEnabled else {
+                log("Ignoring session activation because screen lock playback is disabled")
+                return nil
+            }
             return emit(.open, now: now)
         case .sessionDidResignActive:
             sessionActive = false
             pendingWakeOpen = false
+            guard screenLockSoundsEnabled else {
+                log("Ignoring session resign because screen lock playback is disabled")
+                return nil
+            }
             log("Session resigned active; emitting exit for plain lock or logout")
             return emit(.exit, now: now)
         }
