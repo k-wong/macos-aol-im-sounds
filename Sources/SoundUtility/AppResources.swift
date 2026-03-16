@@ -1,7 +1,7 @@
 import Foundation
 
 enum AppResources {
-    private static let bundleName = "AIMSoundUtility_AIMSoundUtility.bundle"
+    private static let bundleName = "MacOSSoundboardUtility_MacOSSoundboardUtility.bundle"
 
     static func bundle(mainBundle: Bundle = .main) -> Bundle {
         let candidateURLs = bundleSearchRoots(mainBundle: mainBundle).map {

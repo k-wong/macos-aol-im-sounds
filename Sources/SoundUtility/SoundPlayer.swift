@@ -3,14 +3,9 @@ import Foundation
 import OSLog
 
 final class SoundPlayer: @unchecked Sendable {
-    private let bundle: Bundle
     private let logger = AppLog.logger("sound.player")
     private let queue = DispatchQueue(label: "aim.sound.player", qos: .userInitiated)
     private var players: [SoundEvent: AVAudioPlayer] = [:]
-
-    init(bundle: Bundle = AppResources.bundle()) {
-        self.bundle = bundle
-    }
 
     func play(_ event: SoundEvent) {
         queue.async { [weak self] in
@@ -18,9 +13,17 @@ final class SoundPlayer: @unchecked Sendable {
         }
     }
 
+    func invalidate(_ event: SoundEvent) {
+        queue.sync {
+            players[event] = nil
+        }
+    }
+
     private func playSynchronously(_ event: SoundEvent) {
         do {
-            let player = try player(for: event)
+            guard let player = try player(for: event) else {
+                return
+            }
             if player.isPlaying {
                 player.stop()
             }
@@ -32,29 +35,18 @@ final class SoundPlayer: @unchecked Sendable {
         }
     }
 
-    private func player(for event: SoundEvent) throws -> AVAudioPlayer {
+    private func player(for event: SoundEvent) throws -> AVAudioPlayer? {
         if let player = players[event] {
             return player
         }
 
-        guard let url = bundle.url(forResource: resourceName(for: event), withExtension: "mp3") else {
-            throw NSError(domain: "AIMSoundUtility.SoundPlayer", code: 1)
+        guard let url = AppSoundLibrary.configuredSoundURL(for: event) else {
+            return nil
         }
 
         let player = try AVAudioPlayer(contentsOf: url)
         player.prepareToPlay()
         players[event] = player
         return player
-    }
-
-    private func resourceName(for event: SoundEvent) -> String {
-        switch event {
-        case .exit:
-            return "exit"
-        case .open:
-            return "open"
-        case .message:
-            return "message"
-        }
     }
 }

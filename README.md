@@ -16,19 +16,27 @@ Tiny macOS menu bar app that lets you play custom sounds when your Macbook sleep
 ### Option 1: Build dmg (recommended)
 
 1. Download this repo into a local folder
-2. Bring in your own mp3 files (`exit.mp3`, `open.mp3`, `message.mp3`) into the project folder
-3. Double click [build-local-dmg.command](/Users/kev/Documents/mac-aim/build-local-dmg.command) to build a local installer DMG
-4. Open `dist/macos-soundboard-unsigned.dmg`, then drag `macOS Soundboard.app` to Applications
+2. Double click `build-local-dmg.command` to build a local installer DMG
+3. Open `dist/macos-soundboard-unsigned.dmg`, then drag `macOS Soundboard.app` to Applications
+4. Launch the app and use the menu bar options `Choose Exit mp3`, `Choose Open mp3`, and `Choose Message mp3` to assign your sound files
 
-### Option 2: Terminal
+### Option 2: Build zip
 
-1. Install Xcode or the Command Line Tools.
-2. Bring in your own mp3 files (`exit.mp3`, `open.mp3`, `message.mp3`) into the project folder
-3. In the folder, run:
+1. Download this repo into a local folder
+2. Double click `build-local-zip.command` to build a local app zip
+3. Open `dist/macos-soundboard-unsigned.zip`, then move `macOS Soundboard.app` to Applications
+4. Launch the app and use the menu bar options `Choose Exit mp3`, `Choose Open mp3`, and `Choose Message mp3` to assign your sound files
+
+### Option 3: Terminal
+
+1. Install Command Line Tools or Xcode.
+2. In the folder, run:
 
 ```bash
 swift run
 ```
+
+3. Launch the app and use the menu bar options `Choose Exit mp3`, `Choose Open mp3`, and `Choose Message mp3` to assign your sound files
 
 ## Avoid Double Notification Sounds
 

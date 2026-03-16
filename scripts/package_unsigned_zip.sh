@@ -15,9 +15,7 @@ MACOS_DIR="$CONTENTS_DIR/MacOS"
 RESOURCES_DIR="$CONTENTS_DIR/Resources"
 ICONSET_DIR="$WORK_DIR/AppIcon.iconset"
 ICON_FILE="$RESOURCES_DIR/AppIcon.icns"
-STAGING_DIR="$WORK_DIR/dmg-root"
-DMG_PATH="$DIST_DIR/macos-soundboard-unsigned.dmg"
-VOLUME_NAME="$APP_NAME"
+ZIP_PATH="$DIST_DIR/macos-soundboard-unsigned.zip"
 SVG_ICON="$ROOT_DIR/app-icon-on.svg"
 RESOURCE_BUNDLE="$BUILD_DIR/${PRODUCT_NAME}_${PRODUCT_NAME}.bundle"
 EXECUTABLE_SOURCE="$BUILD_DIR/$PRODUCT_NAME"
@@ -36,7 +34,7 @@ EOF
         exit 1
     fi
 
-    for tool_name in swift iconutil hdiutil; do
+    for tool_name in swift iconutil ditto; do
         if ! command -v "$tool_name" >/dev/null 2>&1; then
             printf 'Required tool not found: %s\n' "$tool_name" >&2
             printf 'Install Command Line Tools with `xcode-select --install`, or install Xcode.\n' >&2
@@ -72,8 +70,8 @@ export SWIFTPM_MODULECACHE_OVERRIDE="$CACHE_DIR/swiftpm"
 
 check_required_tools
 
-rm -rf "$WORK_DIR" "$DMG_PATH"
-mkdir -p "$MACOS_DIR" "$RESOURCES_DIR" "$STAGING_DIR"
+rm -rf "$WORK_DIR" "$ZIP_PATH"
+mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 
 run_swift_build
 
@@ -132,16 +130,8 @@ PLIST
 touch "$CONTENTS_DIR/PkgInfo"
 printf 'APPL????' > "$CONTENTS_DIR/PkgInfo"
 
-cp -R "$APP_DIR" "$STAGING_DIR/"
-ln -s /Applications "$STAGING_DIR/Applications"
-
-hdiutil create \
-    -volname "$VOLUME_NAME" \
-    -srcfolder "$STAGING_DIR" \
-    -ov \
-    -format UDZO \
-    "$DMG_PATH"
+ditto -c -k --sequesterRsrc --keepParent "$APP_DIR" "$ZIP_PATH"
 
 rm -rf "$WORK_DIR"
 
-echo "Created unsigned DMG at $DMG_PATH"
+echo "Created unsigned zip at $ZIP_PATH"

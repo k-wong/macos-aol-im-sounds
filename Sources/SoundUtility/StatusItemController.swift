@@ -26,6 +26,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private let onOpenAccessibilitySettings: () -> Void
     private let onToggleLaptopCloseSound: () -> Void
     private let onToggleLaptopOpenSound: () -> Void
+    private let onChooseExitSound: () -> Void
+    private let onChooseOpenSound: () -> Void
+    private let onChooseMessageSound: () -> Void
     private let onMenuWillOpen: () -> Void
     private let bundle: Bundle
     private let menu = NSMenu()
@@ -62,6 +65,21 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         action: #selector(quitSelected),
         keyEquivalent: "q"
     )
+    private lazy var chooseExitSoundItem = NSMenuItem(
+        title: "Choose Exit mp3",
+        action: #selector(chooseExitSound),
+        keyEquivalent: ""
+    )
+    private lazy var chooseOpenSoundItem = NSMenuItem(
+        title: "Choose Open mp3",
+        action: #selector(chooseOpenSound),
+        keyEquivalent: ""
+    )
+    private lazy var chooseMessageSoundItem = NSMenuItem(
+        title: "Choose Message mp3",
+        action: #selector(chooseMessageSound),
+        keyEquivalent: ""
+    )
 
     init(
         appState: AppState,
@@ -72,6 +90,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         onOpenAccessibilitySettings: @escaping () -> Void,
         onToggleLaptopCloseSound: @escaping () -> Void,
         onToggleLaptopOpenSound: @escaping () -> Void,
+        onChooseExitSound: @escaping () -> Void,
+        onChooseOpenSound: @escaping () -> Void,
+        onChooseMessageSound: @escaping () -> Void,
         onMenuWillOpen: @escaping () -> Void = {}
     ) {
         self.statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -83,6 +104,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         self.onOpenAccessibilitySettings = onOpenAccessibilitySettings
         self.onToggleLaptopCloseSound = onToggleLaptopCloseSound
         self.onToggleLaptopOpenSound = onToggleLaptopOpenSound
+        self.onChooseExitSound = onChooseExitSound
+        self.onChooseOpenSound = onChooseOpenSound
+        self.onChooseMessageSound = onChooseMessageSound
         self.onMenuWillOpen = onMenuWillOpen
         super.init()
 
@@ -117,6 +141,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         screenLockSoundsItem.target = self
         laptopCloseSoundItem.target = self
         laptopOpenSoundItem.target = self
+        chooseExitSoundItem.target = self
+        chooseOpenSoundItem.target = self
+        chooseMessageSoundItem.target = self
 
         menu.addItem(notificationSoundsItem)
         menu.addItem(accessibilityPermissionsItem)
@@ -124,7 +151,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.addItem(laptopCloseSoundItem)
         menu.addItem(laptopOpenSoundItem)
         menu.addItem(.separator())
+        menu.addItem(chooseExitSoundItem)
+        menu.addItem(chooseOpenSoundItem)
+        menu.addItem(chooseMessageSoundItem)
+        menu.addItem(.separator())
         menu.addItem(quitItem)
+
+        refreshSoundSelectionTitles()
     }
 
     private func bindState() {
@@ -196,7 +229,14 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         )
     }
 
+    func refreshSoundSelectionTitles() {
+        chooseExitSoundItem.title = soundSelectionTitle(for: .exit)
+        chooseOpenSoundItem.title = soundSelectionTitle(for: .open)
+        chooseMessageSoundItem.title = soundSelectionTitle(for: .message)
+    }
+
     func menuWillOpen(_ menu: NSMenu) {
+        refreshSoundSelectionTitles()
         onMenuWillOpen()
     }
 
@@ -226,6 +266,19 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     private func enabledAccessibilityDescription() -> String {
         appState.enabled ? "macOS Soundboard is On" : "macOS Soundboard is Off"
+    }
+
+    private func soundSelectionTitle(for event: SoundEvent) -> String {
+        let verb = AppSoundLibrary.configuredSoundURL(for: event) == nil ? "Choose" : "Change"
+
+        switch event {
+        case .exit:
+            return "\(verb) Exit mp3"
+        case .open:
+            return "\(verb) Open mp3"
+        case .message:
+            return "\(verb) Message mp3"
+        }
     }
 
     private func notificationSoundsStatus(
@@ -278,5 +331,17 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     @objc private func toggleLaptopOpenSound() {
         onToggleLaptopOpenSound()
+    }
+
+    @objc private func chooseExitSound() {
+        onChooseExitSound()
+    }
+
+    @objc private func chooseOpenSound() {
+        onChooseOpenSound()
+    }
+
+    @objc private func chooseMessageSound() {
+        onChooseMessageSound()
     }
 }

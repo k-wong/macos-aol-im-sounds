@@ -1,5 +1,6 @@
 import AppKit
 import OSLog
+import UniformTypeIdentifiers
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -56,6 +57,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onToggleLaptopOpenSound: { [weak self] in
                 self?.toggleLaptopOpenSound()
             },
+            onChooseExitSound: { [weak self] in
+                self?.chooseSound(for: .exit)
+            },
+            onChooseOpenSound: { [weak self] in
+                self?.chooseSound(for: .open)
+            },
+            onChooseMessageSound: { [weak self] in
+                self?.chooseSound(for: .message)
+            },
             onMenuWillOpen: { [weak self] in
                 self?.syncAccessibilityState(requestPromptIfNeeded: false)
             }
@@ -96,6 +106,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func toggleLaptopOpenSound() {
         appState.laptopOpenSoundEnabled.toggle()
         decisionEngine.setLaptopOpenSoundEnabled(appState.laptopOpenSoundEnabled)
+    }
+
+    private func chooseSound(for event: SoundEvent) {
+        let panel = NSOpenPanel()
+        panel.title = "Choose \(event.rawValue.capitalized) mp3"
+        panel.prompt = "Choose"
+        panel.message = "Select an MP3 file to use for \(event.rawValue) sounds."
+        panel.allowedContentTypes = [.mp3]
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        panel.canCreateDirectories = false
+
+        NSApp.activate(ignoringOtherApps: true)
+        guard panel.runModal() == .OK, let sourceURL = panel.url else {
+            return
+        }
+
+        do {
+            try AppSoundLibrary.installSound(from: sourceURL, for: event)
+            soundPlayer.invalidate(event)
+            statusItemController?.refreshSoundSelectionTitles()
+            log("Configured \(event.rawValue) sound from \(sourceURL.path)")
+        } catch {
+            logger.error(
+                "Failed to configure \(event.rawValue, privacy: .public) sound: \(String(describing: error), privacy: .public)"
+            )
+        }
     }
 
     private func handle(_ signal: LifecycleSignal) {
